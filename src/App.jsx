@@ -1,12 +1,24 @@
 import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import LoginPage from './pages/login.jsx'
+import AdminPage from './pages/adminPage.jsx'
+import { TestPage } from './pages/testPage.jsx'
+import Header from './components/header.jsx'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
-
   return (
-    <>
-      <h1>hello</h1>
-      <h2>my name is dineth</h2>
-    </>
+    <BrowserRouter>
+    <div>
+      <Toaster position="top-center"/>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin/*" element={<AdminPage />} />
+        <Route path="/test" element={<TestPage />} />
+        <Route path="/*" element={<h1>404 Not Found</h1>} />
+      </Routes>
+    </div>
+    </BrowserRouter>
   )
 }
 
