@@ -35,7 +35,7 @@ export default function LoginPage() {
 
         }else{
 
-            navigate("/")
+            navigate("/home")
         }
 
         }catch(e){

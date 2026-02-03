@@ -54,7 +54,18 @@ export function AdminProductsPage(){
 
     return(
         <div className = "w-full h-full max-h-full overflow-y-scroll relative">
-            <Link to="/admin/products/add" className="absolute bottom-4 right-4 w-32 h-12 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 cursor-pointer flex justify-center items-center">Add Product</Link>
+            <Link 
+                to="/admin/products/add" 
+                className="absolute bottom-4 right-4 w-32 h-12 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 cursor-pointer flex justify-center items-center">Add Product
+            </Link>
+
+            {isLoading ?
+                    <div className="w-full h-screen flex justify-center items-center flex-col">
+                        <div className="w-[50px] h-[50px] border-t-[2px] rounded-full animate-spin"/>
+                        <h2 className="font-bold">Loading...</h2>
+
+                    </div> :
+
             <table className="w-full border-collapse border border-gray-400">
                 <thead>
                     <tr>
@@ -105,6 +116,9 @@ export function AdminProductsPage(){
 
                 </tbody>
             </table> 
+
+            }
+
         </div>
     )
 }

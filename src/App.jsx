@@ -7,6 +7,8 @@ import AdminPage from './pages/adminPage.jsx'
 import { TestPage } from './pages/testPage.jsx'
 // import Header from './components/header.jsx'
 import { Toaster } from 'react-hot-toast'
+import { HomePage } from './pages/HomePage.jsx'
+import { ClientProductsPage } from './pages/client/products.jsx'
 
 function App() {
   return (
@@ -15,11 +17,13 @@ function App() {
       <Toaster position="top-center"/>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/home" element={<HomePage/>}/>
+        <Route path="/products" element={<ClientProductsPage/>}/>
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
-        {/* <Route path="/admin/products" element={<AdminProductsPage/>} /> */}
+
         <Route path="/test" element={<TestPage />} />
-        <Route path="/*" element={<h1>404 Not Found</h1>} />
+        <Route path="/*" element={<HomePage/>} />
       </Routes>
     </div>
     </BrowserRouter>
