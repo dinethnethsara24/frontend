@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import mediaUpload from "../../utils/mediaUpload";
 import axios from "axios";
+import BASE_URL from "../../utils/api";
 
 export function AddProductsPage() {
   const [productId, setProductId] = useState("");
@@ -10,6 +11,7 @@ export function AddProductsPage() {
   const [labeledPrice, setLabeledPrice] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
   const [stock, setStock] = useState(0);
+  const [description, setDescription] = useState("");
   const [imgUrls, setImgUrls] = useState([]);
   const [altNames, setAltNames] = useState("");
   const navigate = useNavigate();
@@ -36,11 +38,12 @@ export function AddProductsPage() {
         labeledPrice: Number(labeledPrice),
         sellingPrice: Number(sellingPrice),
         stock: Number(stock),
+        description: description,
         imgUrls: imgUrlsUploaded,
         altNames: altNames.split(","),
       };
 
-      await axios.post("http://localhost:3000/api/product/add", product, {
+      await axios.post(`${BASE_URL}/api/product/add`, product, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -125,6 +128,18 @@ export function AddProductsPage() {
             </div>
           </div>
 
+        </div>
+
+        {/* Description Full Width */}
+        <div className="mt-4">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows="4"
+            className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary outline-none resize-y"
+            placeholder="Enter product description here..."
+          />
         </div>
 
         {/* Alt Names */}

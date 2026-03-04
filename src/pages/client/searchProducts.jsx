@@ -3,6 +3,7 @@ import { SearchProductCard } from "../../components/searchProductCard";
 import { useState, useEffect, useRef } from "react";
 import { FaSearch } from "react-icons/fa";
 import axios from "axios";
+import BASE_URL from "../../utils/api";
 import Loading from "../../components/loading";
 import toast from "react-hot-toast";
 
@@ -20,7 +21,7 @@ export function SearchProductPage() {
     const fetchAllProducts = async () => {
         setIsInitialLoading(true);
         try {
-            const response = await axios.get("http://localhost:3000/api/product");
+            const response = await axios.get(`${BASE_URL}/api/product`);
             const availableProducts = response.data.filter(product => product.isAvailable);
             const uniqueProducts = availableProducts.filter((product, index, self) =>
                 index === self.findIndex((p) => p.productId === product.productId)
@@ -40,7 +41,7 @@ export function SearchProductPage() {
         }
         setIsLoading(true);
         try {
-            const response = await axios.get(`http://localhost:3000/api/product/search/${searchQuery}`);
+            const response = await axios.get(`${BASE_URL}/api/product/search/${searchQuery}`);
             const availableProducts = response.data.filter(product => product.isAvailable);
             const uniqueProducts = availableProducts.filter((product, index, self) =>
                 index === self.findIndex((p) => p.productId === product.productId)
@@ -56,9 +57,9 @@ export function SearchProductPage() {
     const handleSearch = (e) => {
         const value = e.target.value;
         setQuery(value);
-        
+
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        
+
         timeoutRef.current = setTimeout(() => {
             searchProducts(value);
         }, 500);
@@ -79,7 +80,7 @@ export function SearchProductPage() {
                     />
                     <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors" />
                 </div>
-                
+
                 {query.length > 0 && !isLoading && (
                     <div className="max-w-2xl mx-auto mt-2 px-2 text-xs text-gray-400 font-poppins">
                         Found {products.length} product{products.length !== 1 ? 's' : ''} for "{query}"
@@ -98,16 +99,16 @@ export function SearchProductPage() {
                         {products.length === 0 ? (
                             <div className="col-span-full text-center py-20">
                                 <h1 className="text-xl text-gray-400 font-medium font-poppins">
-                                    {query.length > 0 
-                                        ? `No products found for "${query}"` 
+                                    {query.length > 0
+                                        ? `No products found for "${query}"`
                                         : "No products available"}
                                 </h1>
                             </div>
                         ) : (
                             products.map((product) => (
-                                <SearchProductCard 
-                                    key={product._id || product.productId} 
-                                    product={product} 
+                                <SearchProductCard
+                                    key={product._id || product.productId}
+                                    product={product}
                                 />
                             ))
                         )}

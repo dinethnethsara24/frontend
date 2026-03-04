@@ -3,14 +3,18 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { isValidEmail } from "../utils/validator";
-import { GrGoogle } from "react-icons/gr";
+import { FaEnvelope, FaKey } from "react-icons/fa";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useAuth } from "../context/AuthContext";
+import BASE_URL from "../utils/api";
+import { FcGoogle } from "react-icons/fc";
 
 export default function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const googleLogin = useGoogleLogin({
         flow: "implicit",
@@ -18,14 +22,14 @@ export default function LoginPage() {
         onSuccess: async (tokenResponse) => {
             try {
                 const res = await axios.post(
-                    "http://localhost:3000/api/user/login/google",
+                    `${BASE_URL}/api/user/login/google`,
                     {
                         accessToken: tokenResponse.access_token
                     }
                 );
 
                 console.log(res.data);
-                localStorage.setItem("token", res.data.token);
+                login(res.data.token); // syncs context state immediately
 
                 if (res.data.role == "admin") {
                     navigate("/admin")
@@ -53,14 +57,14 @@ export default function LoginPage() {
         }
 
         try {
-            const response = await axios.post('http://localhost:3000/api/user/login', {
+            const response = await axios.post(`${BASE_URL}/api/user/login`, {
                 email: email,
                 password: password
             })
 
             toast.success("login sucessful")
             console.log(response.data)
-            localStorage.setItem("token", response.data.token)
+            login(response.data.token); // syncs context state immediately
 
             if (response.data.role == "admin") {
 
@@ -78,40 +82,67 @@ export default function LoginPage() {
 
 
     return (
-        <div className="w-screen h-screen  bg-[url('/login.jpg')] bg-cover bg-center flex justify-center items-center">
-            <div className="w-[500px] h-[500px] backdrop-blur-md rounded-[25px] shadow-xl justify-center items-center flex flex-col ">
-                <input
+        <div className="w-screen h-screen bg-black bg-cover bg-center flex justify-center items-center font-['SF Pro Display', 'San Francisco Pro', -apple-system, BlinkMacSystemFont, sans-serif]">
 
-                    onChange={
-                        (e) => {
-                            setEmail(e.target.value)
-                        }
-                    }
 
-                    value={email}
-                    placeholder="Email"
-                    type="email"
-                    className="w-[300px] h-[50px] border border-gray-300 rounded-lg my-[10px] px-3" />
+            {/* Glowing border container */}
+            <div className="relative z-10 w-[420px] p-[2px] rounded-[32px] bg-gradient from-white/40 via-white/10 to-white/5 shadow-[0_0_50px_rgba(255,255,255,0.25)]">
+                {/* Inner Glass Container */}
+                <div className="w-full h-full bg-transparent backdrop-blur-75 rounded-[30px] p-10 flex flex-col items-center">
+                    <h1 className="text-white text-3xl font-bold tracking-wide mb-10">Login</h1>
 
-                <input
+                    {/* Email Input Group */}
+                    <div className="w-full relative mb-8">
+                        <input
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email}
+                            placeholder="Email"
+                            type="email"
+                            className="w-full h-[40px] bg-transparent border-0 border-b border-gray-600 focus:border-[#2a6aff] text-white text-lg px-2 pb-2 outline-none transition-colors placeholder:text-gray-400"
+                        />
+                        <FaEnvelope className="absolute right-2 top-2 text-gray-400" />
+                    </div>
 
-                    onChange={
-                        (e) => {
-                            setPassword(e.target.value)
-                        }
-                    }
+                    {/* Password Input Group */}
+                    <div className="w-full relative mb-4">
+                        <input
+                            onChange={(e) => setPassword(e.target.value)}
+                            value={password}
+                            placeholder="Password"
+                            type="password"
+                            className="w-full h-[40px] bg-transparent border-0 border-b border-gray-600 focus:border-[#2a6aff] text-white text-lg px-2 pb-2 outline-none transition-colors placeholder:text-gray-400"
+                        />
+                        <FaKey className="absolute right-2 top-2 text-gray-400" />
+                    </div>
 
-                    value={password}
-                    placeholder="Password"
-                    type="password"
-                    className="w-[300px] h-[50px] border border-gray-300 rounded-lg my-[10px] px-3" />
+                    {/* Options Row */}
+                    <div className="w-full flex justify-between items-center text-xs text-gray-400 mb-10 px-1 font-medium">
+                        <a href="/forget-password" className="hover:text-white transition">Forgot password?</a>
+                    </div>
 
-                <button onClick={handleLogin} className="w-[300px] h-[50px] bg-blue-500 text-white font-bold rounded-lg font-bold text-white my-[20px] cursor-pointer hover:bg-blue-600">Login</button>
-                <button onClick={googleLogin} className="w-[300px] h-[50px] bg-red-500 text-white font-bold rounded-lg font-bold text-white my-[20px] cursor-pointer hover:bg-red-600 flex items-center justify-center">
-                    <GrGoogle className="w-[20px] h-[20px] mr-2" />
-                    <span>Sign in with Google</span>
-                </button>
-                {/* <button  className="w-[300px] h-[50px] bg-blue-500 text-white font-bold rounded-lg font-bold text-white cursor-pointer hover:bg-blue-600">Sign Up</button> */}
+                    {/* Login Button */}
+                    <button
+                        onClick={handleLogin}
+                        className="w-full h-[52px] bg-white text-black rounded-full font-semibold text-[17px] mb-6 hover:bg-black hover:text-white hover:border-white hover:border active:scale-[0.98] transition-all"
+                    >
+                        Login
+                    </button>
+
+                    {/* Google Button */}
+                    <button
+                        onClick={googleLogin}
+                        className="w-full h-[52px] bg-transparent border border-gray-500 text-white rounded-full font-semibold text-[16px] mb-8 hover:bg-white/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                    >
+                        <FcGoogle className="w-[18px] h-[18px]" />
+                        <span>Sign in with Google</span>
+                    </button>
+
+                    {/* Register Text */}
+                    <div className="text-gray-400 text-sm">
+                        Don't have an account? <a href="/register" className="text-white font-semibold hover:underline">Register</a>
+                    </div>
+
+                </div>
             </div>
         </div>
     )

@@ -1,6 +1,7 @@
 import Loading from "../../components/loading";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import BASE_URL from "../../utils/api";
 import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa6";
@@ -57,7 +58,7 @@ export function AdminOrdersPage() {
     }
 
     axios
-      .get("http://localhost:3000/api/order", {
+      .get(`${BASE_URL}/api/order`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -76,7 +77,7 @@ export function AdminOrdersPage() {
 
     axios
       .patch(
-        `http://localhost:3000/api/order/${orderId}`,
+        `${BASE_URL}/api/order/${orderId}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -88,24 +89,24 @@ export function AdminOrdersPage() {
   }
 
   function deleteOrder(orderId) {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    toast.error("Unauthorized");
-    return;
+    if (!token) {
+      toast.error("Unauthorized");
+      return;
+    }
+
+    axios
+      .delete(`${BASE_URL}/api/order/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        toast.success("Order deleted successfully");
+        setIsLoading(true); // refresh the list
+        closeModal(); // close modal if deleting from inside
+      })
+      .catch(() => toast.error("Failed to delete order"));
   }
-
-  axios
-    .delete(`http://localhost:3000/api/order/${orderId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .then(() => {
-      toast.success("Order deleted successfully");
-      setIsLoading(true); // refresh the list
-      closeModal(); // close modal if deleting from inside
-    })
-    .catch(() => toast.error("Failed to delete order"));
-}
 
   return (
     <div className="w-full h-full relative p-4">
@@ -158,13 +159,12 @@ export function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-3 py-1 text-xs rounded-full font-semibold ${
-                          order.status === "pending"
-                            ? "bg-yellow-100 text-yellow-600"
-                            : order.status === "completed"
+                        className={`px-3 py-1 text-xs rounded-full font-semibold ${order.status === "pending"
+                          ? "bg-yellow-100 text-yellow-600"
+                          : order.status === "completed"
                             ? "bg-green-100 text-green-600"
                             : "bg-red-100 text-red-600"
-                        }`}
+                          }`}
                       >
                         {order.status}
                       </span>
@@ -183,13 +183,13 @@ export function AdminOrdersPage() {
                             );
                           }}
                         />
-                            <FaTrash
-                            className="text-[22px] cursor-pointer hover:scale-125 transition text-red-600"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                deleteOrder(order._id);
-                            }}
-                            />
+                        <FaTrash
+                          className="text-[22px] cursor-pointer hover:scale-125 transition text-red-600"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteOrder(order._id);
+                          }}
+                        />
                       </div>
                     </td>
                   </tr>
@@ -206,9 +206,9 @@ export function AdminOrdersPage() {
             >
               {selectedOrder && (
                 <div className="flex flex-col gap-6">
-                    <h2 className="text-lg font-semibold mb-2">
-                      Order {selectedOrder.orderId}
-                    </h2>                
+                  <h2 className="text-lg font-semibold mb-2">
+                    Order {selectedOrder.orderId}
+                  </h2>
                   {/* Order Info */}
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
@@ -222,13 +222,12 @@ export function AdminOrdersPage() {
                       <p>
                         <strong>Status:</strong>{" "}
                         <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            selectedOrder.status === "pending"
-                              ? "bg-yellow-100 text-yellow-600"
-                              : selectedOrder.status === "completed"
+                          className={`px-2 py-1 rounded-full text-xs ${selectedOrder.status === "pending"
+                            ? "bg-yellow-100 text-yellow-600"
+                            : selectedOrder.status === "completed"
                               ? "bg-green-100 text-green-600"
                               : "bg-red-100 text-red-600"
-                          }`}
+                            }`}
                         >
                           {selectedOrder.status}
                         </span>
@@ -246,7 +245,7 @@ export function AdminOrdersPage() {
                             <th className="px-4 py-3">Name</th>
                             <th className="px-4 py-3">Quantity</th>
                             <th className="px-4 py-3">Availability</th>
-                            <th className="px-4 py-3">Price</th>                            
+                            <th className="px-4 py-3">Price</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -269,16 +268,15 @@ export function AdminOrdersPage() {
 
                               <td className="px-4 py-3">
                                 <span
-                                  className={`px-2 py-1 text-xs rounded-full font-semibold ${
-                                    item.productInfo.quantity > 0
-                                      ? "bg-green-100 text-green-600"
-                                      : "bg-red-100 text-red-600"
-                                  }`}
+                                  className={`px-2 py-1 text-xs rounded-full font-semibold ${item.productInfo.quantity > 0
+                                    ? "bg-green-100 text-green-600"
+                                    : "bg-red-100 text-red-600"
+                                    }`}
                                 >
                                   {item.productInfo.quantity > 0 ? "Available" : "Out of Stock"}
                                 </span>
                               </td>
-                              <td className="px-4 py-3">Rs. {item.productInfo.price}</td>                              
+                              <td className="px-4 py-3">Rs. {item.productInfo.price}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -286,28 +284,28 @@ export function AdminOrdersPage() {
                     </div>
 
                     {/* Total */}
-                        <div className="px-4 py-3 bg-gray-100 flex justify-between font-bold text-lg rounded-b-2xl">
-                            <span>Total</span>
-                            <span>Rs. {selectedOrder.total}</span>
-                        </div>
+                    <div className="px-4 py-3 bg-gray-100 flex justify-between font-bold text-lg rounded-b-2xl">
+                      <span>Total</span>
+                      <span>Rs. {selectedOrder.total}</span>
+                    </div>
                   </div>
 
                   {/* Close Button */}
-                    <div className="flex justify-end gap-2 mt-2">
+                  <div className="flex justify-end gap-2 mt-2">
                     <button
-                        onClick={closeModal}
-                        className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                      onClick={closeModal}
+                      className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                     >
-                        Close
+                      Close
                     </button>
 
                     <button
-                        onClick={() => deleteOrder(selectedOrder._id)}
-                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                      onClick={() => deleteOrder(selectedOrder._id)}
+                      className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                     >
-                        Delete Order
+                      Delete Order
                     </button>
-                    </div>
+                  </div>
                 </div>
               )}
             </Modal>

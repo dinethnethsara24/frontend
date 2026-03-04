@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Eye } from "lucide-react"; // Import Eye for the Apple-style action button
+import BASE_URL from "../utils/api";
 
-export function ProductCards() {
+export function ProductCards({ sortOption = "newest" }) {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -12,7 +12,7 @@ export function ProductCards() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/product")
+      .get(`${BASE_URL}/api/product`)
       .then((res) => {
         setProducts(res.data);
         setIsLoading(false);
@@ -22,6 +22,14 @@ export function ProductCards() {
         setIsLoading(false);
       });
   }, []);
+
+  // creates a copy so we don't mutate the original state
+  const sorted = [...products].sort((a, b) => {
+    if (sortOption === "priceLow") return a.sellingPrice - b.sellingPrice;
+    if (sortOption === "priceHigh") return b.sellingPrice - a.sellingPrice;
+    return 0;
+  });
+
 
   if (isLoading) {
     return (
@@ -45,12 +53,12 @@ export function ProductCards() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 bg-gray-50">
-      {products.length === 0 ? (
+      {sorted.length === 0 ? (
         <div className="col-span-full text-center p-8 text-gray-500">
-          No products available
+          No products found
         </div>
       ) : (
-        products.map((product) => (
+        sorted.map((product) => (
           <div
             key={product.productId}
             className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col group"
@@ -78,9 +86,9 @@ export function ProductCards() {
                 <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
                   {product.productName}
                 </h3>
-                
+
                 <div className="flex flex-col items-center">
-                   <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600">
                     From <span className="font-bold text-gray-900">Rs.{product.sellingPrice}</span>
                   </p>
                   {product.labeledPrice > product.sellingPrice && (
@@ -95,11 +103,10 @@ export function ProductCards() {
             {/* Availability and Buy Button */}
             <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
               <span
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                  product.isAvailable && product.stock > 0
-                    ? "bg-gray-50 text-gray-600"
-                    : "bg-red-50 text-red-500"
-                }`}
+                className={`text-xs font-semibold px-2 py-1 rounded-full ${product.isAvailable && product.stock > 0
+                  ? "bg-gray-50 text-gray-600"
+                  : "bg-red-50 text-red-500"
+                  }`}
               >
                 {product.isAvailable && product.stock > 0 ? "In Stock" : "Out of Stock"}
               </span>

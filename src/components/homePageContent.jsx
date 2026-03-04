@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import BASE_URL from "../utils/api";
 import { Link } from "react-router-dom";
 import { ProductCards } from "./productCards";
 import Loading from "./loading";
-import { ChevronRight} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import HeroSection from "./heroSection";
 
 export function HomePageContent() {
@@ -12,16 +13,16 @@ export function HomePageContent() {
 	const [error, setError] = useState(null);
 
 	const categoryConfig = {
-		M: { name: "iPhone"},
-		W: { name: "Apple Watch"},
-		H: { name: "AirPods"},
-		P: { name: "Mac"},
+		M: { name: "iPhone" },
+		W: { name: "Apple Watch" },
+		H: { name: "AirPods" },
+		P: { name: "Mac" },
 	};
 
 	useEffect(() => {
 		const fetchProducts = async () => {
 			try {
-				const res = await axios.get("http://localhost:3000/api/product");
+				const res = await axios.get(`${BASE_URL}/api/product`);
 				setProducts(res.data);
 				setLoading(false);
 			} catch (err) {

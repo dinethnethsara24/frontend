@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import BASE_URL from "../../utils/api";
 
 export function AdminUsersPage() {
   const [users, setUsers] = useState([]);
@@ -9,7 +10,7 @@ export function AdminUsersPage() {
     if (isLoading) {
       const token = localStorage.getItem("token");
       axios
-        .get("http://localhost:3000/api/user/all", {
+        .get(`${BASE_URL}/api/user/all`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

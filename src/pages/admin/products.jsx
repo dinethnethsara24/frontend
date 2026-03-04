@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import BASE_URL from "../../utils/api";
 import { FiEdit } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa6";
@@ -14,7 +15,7 @@ export function AdminProductsPage() {
   useEffect(() => {
     if (isLoading) {
       axios
-        .get("http://localhost:3000/api/product")
+        .get(`${BASE_URL}/api/product`)
         .then((res) => {
           setProducts(res.data);
           setIsLoading(false);
@@ -34,7 +35,7 @@ export function AdminProductsPage() {
     }
 
     axios
-      .delete("http://localhost:3000/api/product/" + productId, {
+      .delete(`${BASE_URL}/api/product/` + productId, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -83,6 +84,7 @@ export function AdminProductsPage() {
                   <th className="px-6 py-4">ID</th>
                   <th className="px-6 py-4">Image</th>
                   <th className="px-6 py-4">Name</th>
+                  <th className="px-6 py-4">Description</th>
                   <th className="px-6 py-4">Label Price</th>
                   <th className="px-6 py-4">Selling Price</th>
                   <th className="px-6 py-4">Stock</th>
@@ -113,6 +115,10 @@ export function AdminProductsPage() {
                       {item.productName}
                     </td>
 
+                    <td className="px-6 py-4 text-gray-500 max-w-xs truncate">
+                      {item.description}
+                    </td>
+
                     <td className="px-6 py-4 text-gray-500">
                       Rs. {item.labeledPrice}
                     </td>
@@ -127,11 +133,10 @@ export function AdminProductsPage() {
 
                     <td className="px-6 py-4">
                       <span
-                        className={`px-3 py-1 text-xs rounded-full font-semibold ${
-                          item.isAvailable
-                            ? "bg-green-100 text-green-600"
-                            : "bg-red-100 text-red-600"
-                        }`}
+                        className={`px-3 py-1 text-xs rounded-full font-semibold ${item.isAvailable
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-600"
+                          }`}
                       >
                         {item.isAvailable ? "Available" : "Out of Stock"}
                       </span>
@@ -139,13 +144,13 @@ export function AdminProductsPage() {
 
                     <td className="px-6 py-4">
                       <div className="flex justify-center items-center gap-4">
-                        <FaTrash 
+                        <FaTrash
 
                           onClick={() => deleteProduct(item.productId)}
                           className="text-[22px] cursor-pointer hover:scale-125 transition text-primary"
                         />
 
-                        <FiEdit 
+                        <FiEdit
                           onClick={() =>
                             navigate("/admin/products/edit-products", {
                               state: item,

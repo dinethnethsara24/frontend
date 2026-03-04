@@ -1,9 +1,10 @@
 import axios from "axios"
+import BASE_URL from "../../utils/api"
 import { useState } from "react"
 import { BiMinus, BiPlus, BiTrash, BiShoppingBag } from "react-icons/bi"
 import { Link, useLocation } from "react-router-dom"
 
-export default function CheckoutPage(){
+export default function CheckoutPage() {
     const location = useLocation()
 
     const [phoneNumber, setPhoneNumber] = useState("")
@@ -11,11 +12,11 @@ export default function CheckoutPage(){
 
     console.log(location.state.cart)
 
-    const [cart,setCart] = useState(location.state?.cart || [])
+    const [cart, setCart] = useState(location.state?.cart || [])
 
-    function getTotal(){
+    function getTotal() {
         let total = 0;
-        cart.forEach((item)=>{
+        cart.forEach((item) => {
             total += item.sellingPrice * item.qty;
         })
         return total;
@@ -23,15 +24,15 @@ export default function CheckoutPage(){
 
     function removeFromCart(index) {
         const newCart = cart.filter((item, i) => i !== index);
-        setCart(newCart);   
+        setCart(newCart);
     }
 
     function changeQty(index, qty) {
-        const newQty = cart[index].qty + qty; 
-        if(newQty<=0){
+        const newQty = cart[index].qty + qty;
+        if (newQty <= 0) {
             removeFromCart(index)
             return
-        }else{
+        } else {
             const newCart = [...cart]
             newCart[index].qty = newQty;
             setCart(newCart)
@@ -39,42 +40,43 @@ export default function CheckoutPage(){
 
     }
 
-    async function placeOrder(){
+    async function placeOrder() {
         const token = localStorage.getItem("token")
-            if(!token){
-                alert("Please login to place order")
-                return
+        if (!token) {
+            alert("Please login to place order")
+            return
+        }
+
+        const orderInformation = {
+            products: [],
+            phone: phoneNumber,
+            address: address
+
+        }
+
+        for (let i = 0; i < cart.length; i++) {
+
+            const item = {
+                productId: cart[i].productId,
+                qty: cart[i].qty
             }
 
-            const orderInformation ={
-                products : [],
-                phone : phoneNumber,
-                address : address
+            orderInformation.products.push(item)
+        }
 
-            }
-
-            for(let i=0; i<cart.length; i++){
-
-                const item = {
-                    productId : cart[i].productId,
-                    qty : cart[i].qty
+        try {
+            const res = await axios.post(`${BASE_URL}/api/order`, orderInformation, {
+                headers: {
+                    Authorization: "Bearer " + token
                 }
-
-             orderInformation.products.push(item)
-            }
-
-            try{
-                const res = await axios.post("http://localhost:3000/api/order", orderInformation, {
-                    headers : {
-                        Authorization : "Bearer "+token
-                    }})
-                alert("Order placed successfully")
-            }catch(err){
-                alert("Error placing order")
-            }
+            })
+            alert("Order placed successfully")
+        } catch (err) {
+            alert("Error placing order")
+        }
     }
-        
-    
+
+
 
     if (cart.length === 0) {
         return (
@@ -84,11 +86,11 @@ export default function CheckoutPage(){
                 </div>
                 <h2 className="text-3xl font-bold text-secondary">Your cart is empty</h2>
                 <p className="text-gray-500 text-center max-w-md">
-                    Looks like you haven't added anything to your cart yet. 
+                    Looks like you haven't added anything to your cart yet.
                     Explore our products and find something you'll love!
                 </p>
-                <Link 
-                    to="/products" 
+                <Link
+                    to="/products"
                     className="bg-accent text-white px-8 py-3 rounded-xl font-bold 
                              hover:bg-secondary transform hover:scale-105 
                              transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -99,10 +101,10 @@ export default function CheckoutPage(){
         )
     }
 
-    return(
+    return (
         <div className="w-full max-w-full min-h-screen bg-gradient-to-b from-white to-primary/10 
                       flex flex-col items-center pt-8 pb-8 relative">
-            
+
             {/* Desktop Checkout Card - Moved to better position */}
             <div className="z-50 hidden lg:flex w-[320px] bg-white/90 backdrop-blur-sm 
                           h-[100px] shadow-xl rounded-xl absolute top-4 right-8 
@@ -113,30 +115,30 @@ export default function CheckoutPage(){
                         LKR {getTotal().toFixed(2)}
                     </p>
 
-                                    <input type="text" placeholder="Phone Number"
-                       className="border border-gray-300 rounded-lg px-3 py-2 
+                    <input type="text" placeholder="Phone Number"
+                        className="border border-gray-300 rounded-lg px-3 py-2 
                                 focus:outline-none focus:ring-2 focus:ring-accent/50 
                                 focus:border-transparent transition-all duration-300"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)} />
 
-                <input type="text" placeholder="Delivery Address"
-                       className="border border-gray-300 rounded-lg px-3 py-2 
+                    <input type="text" placeholder="Delivery Address"
+                        className="border border-gray-300 rounded-lg px-3 py-2 
                                 focus:outline-none focus:ring-2 focus:ring-accent/50 
                                 focus:border-transparent transition-all duration-300"
                         value={address}
-                        onChange={(e) => setAddress(e.target.value)} /> 
+                        onChange={(e) => setAddress(e.target.value)} />
                 </div>
 
-       
 
-                <button to="/checkout" state={{ cart: cart }} 
-                      className="bg-gradient-to-r from-accent to-secondary text-white 
+
+                <button to="/checkout" state={{ cart: cart }}
+                    className="bg-gradient-to-r from-accent to-secondary text-white 
                                px-5 py-2.5 rounded-lg font-bold text-sm
                                hover:from-secondary hover:to-accent 
                                transform hover:scale-105 transition-all duration-300 
                                shadow-lg whitespace-nowrap"
-                      onClick={placeOrder} >
+                    onClick={placeOrder} >
                     place order
                 </button>
             </div>
@@ -150,24 +152,24 @@ export default function CheckoutPage(){
             {/* Cart Items Container */}
             <div className="w-full max-w-4xl px-4 md:px-8 space-y-4 mb-8">
                 {cart.map((item, index) => {
-                    return(
-                        <div key={item.productId} 
-                             className="group w-full bg-white rounded-2xl shadow-lg 
+                    return (
+                        <div key={item.productId}
+                            className="group w-full bg-white rounded-2xl shadow-lg 
                                       hover:shadow-xl transition-all duration-300 
                                       flex flex-col md:flex-row relative 
                                       justify-between items-start md:items-center p-4 
                                       border border-gray-100 hover:border-accent/30">
-                            
+
                             {/* Product Image & Details Row */}
                             <div className="flex flex-col sm:flex-row w-full md:w-auto items-start gap-4">
                                 {/* Product Image */}
                                 <div className="flex-shrink-0">
-                                    <img src={item.imgUrls} 
-                                         className="w-[100px] h-[100px] object-cover rounded-xl 
+                                    <img src={item.imgUrls}
+                                        className="w-[100px] h-[100px] object-cover rounded-xl 
                                                   shadow-md group-hover:shadow-lg 
                                                   transition-all duration-300"/>
                                 </div>
-                                
+
                                 {/* Product Details */}
                                 <div className="flex-1">
                                     <h1 className="text-lg md:text-xl text-secondary font-bold 
@@ -195,7 +197,7 @@ export default function CheckoutPage(){
                                     </div>
                                 </div>
                             </div>
-                            
+
                             {/* Quantity Controls and Price Row */}
                             <div className="flex flex-row items-center justify-between w-full md:w-auto mt-4 md:mt-0 md:ml-4 gap-4">
                                 {/* Quantity Controls */}
@@ -205,11 +207,11 @@ export default function CheckoutPage(){
                                                      hover:text-white transition-all duration-300 
                                                      flex items-center justify-center text-lg 
                                                      font-bold"
-                                            onClick={() => {
-                                                changeQty(index, -1);
-                                                
-                                            }}>
-                                        <BiMinus/>
+                                        onClick={() => {
+                                            changeQty(index, -1);
+
+                                        }}>
+                                        <BiMinus />
                                     </button>
                                     <span className="w-8 text-center text-lg font-bold 
                                                    text-secondary">
@@ -220,13 +222,13 @@ export default function CheckoutPage(){
                                                      hover:text-white transition-all duration-300 
                                                      flex items-center justify-center text-lg 
                                                      font-bold"
-                                            onClick={() => {
-                                                changeQty(index, +1);
-                                            }}>
-                                        <BiPlus/> 
+                                        onClick={() => {
+                                            changeQty(index, +1);
+                                        }}>
+                                        <BiPlus />
                                     </button>
                                 </div>
-                                
+
                                 {/* Item Total */}
                                 <div className="text-right min-w-[100px]">
                                     <p className="text-xs text-gray-400">Subtotal</p>
@@ -235,7 +237,7 @@ export default function CheckoutPage(){
                                     </h1>
                                 </div>
                             </div>
-                            
+
                             {/* Remove Button - Repositioned with better spacing */}
                             <button className="absolute -top-2 -right-2 md:static 
                                              w-8 h-8 rounded-full bg-red-50 
@@ -243,11 +245,11 @@ export default function CheckoutPage(){
                                              hover:text-white transition-all duration-300 
                                              flex items-center justify-center 
                                              shadow-md hover:shadow-lg md:ml-2"
-                                    onClick={() => {
-                                            removeFromCart(index)
-                                    }}
-                                    title="Remove item">
-                                <BiTrash className="text-sm"/>
+                                onClick={() => {
+                                    removeFromCart(index)
+                                }}
+                                title="Remove item">
+                                <BiTrash className="text-sm" />
                             </button>
                         </div>
                     )
@@ -266,14 +268,14 @@ export default function CheckoutPage(){
                         </p>
                     </div>
                     <div className="flex gap-4">
-                        <Link to="/products" 
-                              className="px-6 py-3 border-2 border-accent text-accent 
+                        <Link to="/products"
+                            className="px-6 py-3 border-2 border-accent text-accent 
                                        rounded-xl font-bold hover:bg-accent/5 
                                        transition-colors duration-300">
                             Continue Shopping
                         </Link>
-                        <Link to="/checkout" state={{ cart: cart }} 
-                              className="bg-gradient-to-r from-accent to-secondary 
+                        <Link to="/checkout" state={{ cart: cart }}
+                            className="bg-gradient-to-r from-accent to-secondary 
                                        text-white px-8 py-3 rounded-xl font-bold 
                                        hover:from-secondary hover:to-accent 
                                        transform hover:scale-105 transition-all duration-300 
@@ -295,8 +297,8 @@ export default function CheckoutPage(){
                                 LKR {getTotal().toFixed(2)}
                             </p>
                         </div>
-                        <Link to="/checkout" state={{ cart: cart }} 
-                              className="bg-gradient-to-r from-accent to-secondary 
+                        <Link to="/checkout" state={{ cart: cart }}
+                            className="bg-gradient-to-r from-accent to-secondary 
                                        text-white px-6 py-3 rounded-xl font-bold 
                                        hover:from-secondary hover:to-accent 
                                        transition-all duration-300 

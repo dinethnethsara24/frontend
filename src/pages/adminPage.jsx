@@ -8,27 +8,29 @@ import { FaBoxOpen } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { FaShoppingCart } from "react-icons/fa";
 import { AdminOrdersPage } from "./admin/orders";
-
+import Logout from "./logout";
+import { useAuth } from "../context/AuthContext";
 
 export default function AdminPage() {
   const location = useLocation();
   const path = location.pathname;
+  const { user } = useAuth();
+  const userName = user ? `${user.firstName} ${user.lastName}` : "Admin";
 
   function getClass(name) {
     return `flex items-center gap-3 px-6 py-4 rounded-xl transition-all duration-300
-    ${
-      path.includes(name)
+    ${path.includes(name)
         ? "bg-[#547792] text-white shadow-lg"
         : "text-gray-600 hover:bg-[#547792]/10 hover:text-[#547792]-600"
-    }`;
+      }`;
   }
 
   return (
     <div className="w-full h-screen flex bg-gray-100">
-      
+
       {/* Sidebar */}
       <div className="h-full w-[260px] bg-white shadow-lg p-6 flex flex-col">
-        
+
         <h1 className="text-2xl font-bold text-black-600 mb-8">
           Admin Panel
         </h1>
@@ -58,12 +60,11 @@ export default function AdminPage() {
           </h2>
 
           <div className="text-sm text-gray-500">
-            Welcome back, Admin
+            Welcome back, {userName}
           </div>
 
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-            Logout
-          </button>
+          <Logout />
+
         </div>
 
         {/* Page Content */}
