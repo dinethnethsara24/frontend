@@ -10,8 +10,6 @@ export default function CheckoutPage() {
     const [phoneNumber, setPhoneNumber] = useState("")
     const [address, setAddress] = useState("")
 
-    console.log(location.state.cart)
-
     const [cart, setCart] = useState(location.state?.cart || [])
 
     function getTotal() {
@@ -105,52 +103,65 @@ export default function CheckoutPage() {
         <div className="w-full max-w-full min-h-screen bg-gradient-to-b from-white to-primary/10 
                       flex flex-col items-center pt-8 pb-8 relative">
 
-            {/* Desktop Checkout Card - Moved to better position */}
-            <div className="z-50 hidden lg:flex w-[320px] bg-white/90 backdrop-blur-sm 
-                          h-[100px] shadow-xl rounded-xl absolute top-4 right-8 
-                          flex-row items-center justify-between px-6 border border-accent/20">
-                <div>
-                    <p className="text-xs text-gray-500">Total</p>
-                    <p className="text-2xl font-bold text-accent">
-                        LKR {getTotal().toFixed(2)}
-                    </p>
+            {/* Desktop Checkout Card - Right Sidebar */}
+            <div className="z-40 hidden lg:flex flex-col w-[360px] bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]
+                          absolute top-8 right-8 p-6 border border-gray-100">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
 
-                    <input type="text" placeholder="Phone Number"
-                        className="border border-gray-300 rounded-lg px-3 py-2 
-                                focus:outline-none focus:ring-2 focus:ring-accent/50 
-                                focus:border-transparent transition-all duration-300"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)} />
-
-                    <input type="text" placeholder="Delivery Address"
-                        className="border border-gray-300 rounded-lg px-3 py-2 
-                                focus:outline-none focus:ring-2 focus:ring-accent/50 
-                                focus:border-transparent transition-all duration-300"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)} />
+                <div className="space-y-4 mb-8">
+                    <div className="flex justify-between text-sm text-gray-600">
+                        <span>Items ({cart.length})</span>
+                        <span>LKR {getTotal().toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-gray-600">
+                        <span>Shipping</span>
+                        <span className="text-green-600 font-medium">Free</span>
+                    </div>
+                    <div className="h-px bg-gray-100 my-4"></div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-base font-semibold text-gray-900">Total</span>
+                        <span className="text-2xl font-bold text-gray-900">
+                            LKR {getTotal().toFixed(2)}
+                        </span>
+                    </div>
                 </div>
 
+                <div className="space-y-4 mb-6">
+                    <div>
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Delivery Details</label>
+                        <input type="tel" placeholder="Phone Number"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm
+                                    focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-500 hover:border-gray-300 transition-all duration-300"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)} />
+                    </div>
 
+                    <div>
+                        <input type="text" placeholder="Full Delivery Address"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm
+                                    focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-500 hover:border-gray-300 transition-all duration-300"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)} />
+                    </div>
+                </div>
 
-                <button to="/checkout" state={{ cart: cart }}
-                    className="bg-gradient-to-r from-accent to-secondary text-white 
-                               px-5 py-2.5 rounded-lg font-bold text-sm
-                               hover:from-secondary hover:to-accent 
-                               transform hover:scale-105 transition-all duration-300 
-                               shadow-lg whitespace-nowrap"
+                <button
+                    disabled={!phoneNumber || !address}
+                    className="w-full bg-black text-white py-4 rounded-xl font-medium text-sm
+                               hover:bg-gray-800 transform hover:-translate-y-0.5 transition-all duration-300 shadow-xl shadow-black/10 disabled:bg-gray-300 disabled:text-gray-500 disabled:transform-none disabled:shadow-none disabled:cursor-not-allowed"
                     onClick={placeOrder} >
-                    place order
+                    Complete Order
                 </button>
             </div>
 
             {/* Cart Header */}
-            <div className="w-full max-w-4xl px-4 md:px-8 mb-6">
-                <h1 className="text-3xl font-bold text-secondary">Shopping Cart</h1>
-                <p className="text-gray-500 mt-1">{cart.length} {cart.length === 1 ? 'item' : 'items'}</p>
+            <div className="w-full max-w-6xl px-4 md:px-8 mb-6 lg:pr-[400px]">
+                <h1 className="text-3xl font-bold text-gray-900 font-poppins tracking-tight">Checkout</h1>
+                <p className="text-gray-500 mt-2 text-sm">{cart.length} {cart.length === 1 ? 'item' : 'items'} in your bag.</p>
             </div>
 
             {/* Cart Items Container */}
-            <div className="w-full max-w-4xl px-4 md:px-8 space-y-4 mb-8">
+            <div className="w-full max-w-6xl px-4 md:px-8 space-y-4 mb-32 lg:mb-8 lg:pr-[400px]">
                 {cart.map((item, index) => {
                     return (
                         <div key={item.productId}
@@ -163,34 +174,30 @@ export default function CheckoutPage() {
                             {/* Product Image & Details Row */}
                             <div className="flex flex-col sm:flex-row w-full md:w-auto items-start gap-4">
                                 {/* Product Image */}
-                                <div className="flex-shrink-0">
+                                <div className="flex-shrink-0 bg-gray-50 rounded-xl p-2 h-24 w-24 flex items-center justify-center border border-gray-100 group-hover:border-gray-200 transition-colors">
                                     <img src={item.imgUrls}
-                                        className="w-[100px] h-[100px] object-cover rounded-xl 
-                                                  shadow-md group-hover:shadow-lg 
-                                                  transition-all duration-300"/>
+                                        className="max-h-full max-w-full object-contain mix-blend-multiply
+                                                  transition-transform duration-500 group-hover:scale-110"/>
                                 </div>
 
                                 {/* Product Details */}
-                                <div className="flex-1">
-                                    <h1 className="text-lg md:text-xl text-secondary font-bold 
-                                                 group-hover:text-accent transition-colors">
+                                <div className="flex-1 space-y-1">
+                                    <h1 className="text-base md:text-lg text-gray-900 font-semibold 
+                                                 group-hover:text-black transition-colors line-clamp-2">
                                         {item.productName}
                                     </h1>
-                                    <p className="text-xs text-gray-400 mb-2">
-                                        ID: {item.productId}
-                                    </p>
-                                    <div className="flex flex-wrap items-center gap-2">
+                                    <div className="flex flex-wrap items-center gap-2 mt-2">
                                         {item.labeledPrice > item.sellingPrice ? (
                                             <>
-                                                <span className="text-sm text-gray-400 line-through">
-                                                    LKR {item.labeledPrice.toFixed(2)}
-                                                </span>
-                                                <span className="text-base md:text-lg font-bold text-accent">
+                                                <span className="text-lg font-semibold text-gray-900">
                                                     LKR {item.sellingPrice.toFixed(2)}
+                                                </span>
+                                                <span className="text-xs text-gray-400 line-through">
+                                                    LKR {item.labeledPrice.toFixed(2)}
                                                 </span>
                                             </>
                                         ) : (
-                                            <span className="text-base md:text-lg font-bold text-accent">
+                                            <span className="text-lg font-semibold text-gray-900">
                                                 LKR {item.sellingPrice.toFixed(2)}
                                             </span>
                                         )}
@@ -201,110 +208,88 @@ export default function CheckoutPage() {
                             {/* Quantity Controls and Price Row */}
                             <div className="flex flex-row items-center justify-between w-full md:w-auto mt-4 md:mt-0 md:ml-4 gap-4">
                                 {/* Quantity Controls */}
-                                <div className="flex items-center gap-2">
-                                    <button className="w-8 h-8 rounded-lg bg-accent/10 
-                                                     hover:bg-accent text-accent 
-                                                     hover:text-white transition-all duration-300 
-                                                     flex items-center justify-center text-lg 
-                                                     font-bold"
+                                <div className="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-lg p-1">
+                                    <button className="w-8 h-8 rounded-md bg-white shadow-sm border border-gray-100
+                                                     hover:bg-gray-100 text-gray-600 hover:text-black
+                                                     transition-all duration-300 flex items-center justify-center text-lg active:scale-95"
                                         onClick={() => {
                                             changeQty(index, -1);
-
                                         }}>
-                                        <BiMinus />
+                                        <BiMinus size={14} />
                                     </button>
-                                    <span className="w-8 text-center text-lg font-bold 
-                                                   text-secondary">
+                                    <span className="w-6 text-center text-sm font-semibold text-gray-900">
                                         {item.qty}
                                     </span>
-                                    <button className="w-8 h-8 rounded-lg bg-accent/10 
-                                                     hover:bg-accent text-accent 
-                                                     hover:text-white transition-all duration-300 
-                                                     flex items-center justify-center text-lg 
-                                                     font-bold"
+                                    <button className="w-8 h-8 rounded-md bg-white shadow-sm border border-gray-100
+                                                     hover:bg-gray-100 text-gray-600 hover:text-black
+                                                     transition-all duration-300 flex items-center justify-center text-lg active:scale-95"
                                         onClick={() => {
                                             changeQty(index, +1);
                                         }}>
-                                        <BiPlus />
+                                        <BiPlus size={14} />
                                     </button>
                                 </div>
 
                                 {/* Item Total */}
-                                <div className="text-right min-w-[100px]">
-                                    <p className="text-xs text-gray-400">Subtotal</p>
-                                    <h1 className="text-lg font-bold text-secondary whitespace-nowrap">
+                                <div className="text-right min-w-[90px] hidden sm:block">
+                                    <h1 className="text-base font-semibold text-gray-900 whitespace-nowrap">
                                         LKR {(item.sellingPrice * item.qty).toFixed(2)}
                                     </h1>
                                 </div>
                             </div>
 
-                            {/* Remove Button - Repositioned with better spacing */}
-                            <button className="absolute -top-2 -right-2 md:static 
-                                             w-8 h-8 rounded-full bg-red-50 
-                                             text-red-500 hover:bg-red-500 
-                                             hover:text-white transition-all duration-300 
-                                             flex items-center justify-center 
-                                             shadow-md hover:shadow-lg md:ml-2"
+                            {/* Remove Button */}
+                            <button className="absolute -top-2 -right-2 
+                                             w-7 h-7 rounded-full bg-white border border-gray-200
+                                             text-gray-400 hover:bg-gray-100 hover:text-red-500 hover:border-red-200
+                                             transition-all duration-300 shadow-sm
+                                             flex items-center justify-center z-10"
                                 onClick={() => {
                                     removeFromCart(index)
                                 }}
                                 title="Remove item">
-                                <BiTrash className="text-sm" />
+                                <BiTrash size={14} />
                             </button>
                         </div>
                     )
                 })}
             </div>
 
-            {/* Checkout Section - Improved placement */}
-            <div className="w-full max-w-4xl px-4 md:px-8 mt-4">
-                {/* Desktop Bottom Checkout (for medium screens where floating card might not show) */}
-                <div className="hidden md:flex lg:hidden bg-white rounded-xl shadow-lg 
-                              p-6 items-center justify-between border border-accent/20">
-                    <div>
-                        <p className="text-sm text-gray-500">Total Amount</p>
-                        <p className="text-3xl font-bold text-accent">
-                            LKR {getTotal().toFixed(2)}
-                        </p>
-                    </div>
-                    <div className="flex gap-4">
-                        <Link to="/products"
-                            className="px-6 py-3 border-2 border-accent text-accent 
-                                       rounded-xl font-bold hover:bg-accent/5 
-                                       transition-colors duration-300">
-                            Continue Shopping
-                        </Link>
-                        <Link to="/checkout" state={{ cart: cart }}
-                            className="bg-gradient-to-r from-accent to-secondary 
-                                       text-white px-8 py-3 rounded-xl font-bold 
-                                       hover:from-secondary hover:to-accent 
-                                       transform hover:scale-105 transition-all duration-300 
-                                       shadow-lg">
-                            Proceed to Checkout
-                        </Link>
-                    </div>
-                </div>
+            {/* Mobile Checkout Bar - Improved visibility and styling */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-8px_30px_rgb(0,0,0,0.06)] 
+                          rounded-t-3xl p-5 border-t border-gray-100 z-50 animate-in slide-in-from-bottom-5">
 
-                {/* Mobile Checkout Bar - Improved visibility and spacing */}
-                <div className="md:hidden fixed bottom-4 left-4 right-4 
-                              bg-white shadow-2xl rounded-xl 
-                              flex flex-col items-center p-4 
-                              border-2 border-accent/20 z-50">
-                    <div className="w-full flex items-center justify-between">
+                <div className="max-w-6xl mx-auto">
+                    {/* Inputs */}
+                    <div className="flex flex-col gap-3 mb-4">
+                        <input type="tel" placeholder="Phone Number"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm
+                                    focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-500 transition-all"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)} />
+
+                        <input type="text" placeholder="Full Delivery Address"
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm
+                                    focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-500 transition-all"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)} />
+                    </div>
+
+                    <div className="w-full flex items-center justify-between gap-4">
                         <div>
-                            <p className="text-xs text-gray-500">Total Amount</p>
-                            <p className="text-2xl font-bold text-accent">
+                            <p className="text-xs text-gray-500 font-medium tracking-wide uppercase">Total Amount</p>
+                            <p className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">
                                 LKR {getTotal().toFixed(2)}
                             </p>
                         </div>
-                        <Link to="/checkout" state={{ cart: cart }}
-                            className="bg-gradient-to-r from-accent to-secondary 
-                                       text-white px-6 py-3 rounded-xl font-bold 
-                                       hover:from-secondary hover:to-accent 
-                                       transition-all duration-300 
-                                       shadow-lg">
-                            Checkout
-                        </Link>
+                        <button
+                            disabled={!phoneNumber || !address}
+                            className="flex-1 max-w-[200px] bg-black text-white px-6 py-3.5 rounded-xl font-medium text-sm
+                                       hover:bg-gray-800 transition-all duration-300 shadow-xl shadow-black/10
+                                       disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed"
+                            onClick={placeOrder} >
+                            Place Order
+                        </button>
                     </div>
                 </div>
             </div>

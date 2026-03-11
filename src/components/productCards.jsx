@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import BASE_URL from "../utils/api";
 
-export function ProductCards({ sortOption = "newest" }) {
+export function ProductCards({ sortOption = "newest", category = "All" }) {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,8 +23,16 @@ export function ProductCards({ sortOption = "newest" }) {
       });
   }, []);
 
+  // Filter items by category first
+  const filtered = category === "All"
+    ? products
+    : products.filter((product) => {
+      const prefix = product.productId?.charAt(0)?.toUpperCase();
+      return prefix === category;
+    });
+
   // creates a copy so we don't mutate the original state
-  const sorted = [...products].sort((a, b) => {
+  const sorted = [...filtered].sort((a, b) => {
     if (sortOption === "priceLow") return a.sellingPrice - b.sellingPrice;
     if (sortOption === "priceHigh") return b.sellingPrice - a.sellingPrice;
     return 0;
@@ -52,7 +60,7 @@ export function ProductCards({ sortOption = "newest" }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 bg-gray-50">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 p-3 md:p-6 bg-gray-50">
       {sorted.length === 0 ? (
         <div className="col-span-full text-center p-8 text-gray-500">
           No products found
@@ -61,12 +69,12 @@ export function ProductCards({ sortOption = "newest" }) {
         sorted.map((product) => (
           <div
             key={product.productId}
-            className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col group"
+            className="relative bg-white rounded-xl md:rounded-2xl p-3 md:p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col group"
           >
 
             <Link to={`/overview/${product.productId}`} className="flex flex-col items-center">
               {/* Image Container */}
-              <div className="h-48 w-full flex items-center justify-center mb-6 mt-2">
+              <div className="h-32 md:h-48 w-full flex items-center justify-center mb-4 md:mb-6 mt-2">
                 {product.imgUrls && product.imgUrls.length > 0 ? (
                   <img
                     src={product.imgUrls[0]}
@@ -80,15 +88,15 @@ export function ProductCards({ sortOption = "newest" }) {
 
               {/* Product Info*/}
               <div className="text-center w-full space-y-1">
-                <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
+                <p className="text-[9px] md:text-[10px] font-medium text-gray-400 uppercase tracking-widest hidden sm:block">
                   Apple
                 </p>
-                <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
+                <h3 className="font-semibold text-sm md:text-lg text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">
                   {product.productName}
                 </h3>
 
                 <div className="flex flex-col items-center">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-xs md:text-sm text-gray-600">
                     From <span className="font-bold text-gray-900">Rs.{product.sellingPrice}</span>
                   </p>
                   {product.labeledPrice > product.sellingPrice && (
@@ -101,9 +109,9 @@ export function ProductCards({ sortOption = "newest" }) {
             </Link>
 
             {/* Availability and Buy Button */}
-            <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+            <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-gray-50 flex items-center justify-between">
               <span
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${product.isAvailable && product.stock > 0
+                className={`text-[10px] md:text-xs font-semibold px-2 py-1 rounded-full ${product.isAvailable && product.stock > 0
                   ? "bg-gray-50 text-gray-600"
                   : "bg-red-50 text-red-500"
                   }`}
@@ -113,8 +121,9 @@ export function ProductCards({ sortOption = "newest" }) {
 
               <button
                 disabled={!product.isAvailable || product.stock <= 0}
-                className="px-4 py-1.5 text-xs font-bold rounded-full text-gray-900 border border-2 border-gray-800 hover:bg-black hover:text-white disabled:bg-gray-300 transition-all transform active:scale-95"
-                onClick={() => {
+                className="px-2 md:px-4 py-1.5 text-[10px] md:text-xs font-bold rounded-full text-gray-900 border-2 border-gray-800 hover:bg-black hover:text-white disabled:border-gray-300 disabled:text-gray-400 disabled:bg-transparent transition-all transform active:scale-95"
+                onClick={(e) => {
+                  e.preventDefault(); // prevent triggering the Link
                   navigate("/checkout", {
                     state: {
                       cart: [{

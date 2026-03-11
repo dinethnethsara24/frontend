@@ -9,7 +9,7 @@ export function Footer() {
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
 					{/* Company Info */}
 					<div>
-						<h3 className="text-xl font-bold mb-4">Apple Store</h3>
+						<h3 className="text-xl font-bold mb-4">Smart Tech Store</h3>
 						<p className="text-gray-400 text-sm mb-4">
 							Your premium destination for Apple products and accessories.
 						</p>
@@ -49,9 +49,9 @@ export function Footer() {
 								</Link>
 							</li>
 							<li>
-								<a href="#" className="text-gray-400 hover:text-white transition">
+								<Link to="/about" className="text-gray-400 hover:text-white transition">
 									About Us
-								</a>
+								</Link>
 							</li>
 						</ul>
 					</div>
@@ -89,15 +89,15 @@ export function Footer() {
 						<ul className="space-y-3 text-sm">
 							<li className="flex items-center gap-2 text-gray-400">
 								<Phone size={16} />
-								+1 (555) 123-4567
+								+94 78 554 5340
 							</li>
 							<li className="flex items-center gap-2 text-gray-400">
 								<Mail size={16} />
-								support@applestore.com
+								dinethnethsaradev@gmail.com
 							</li>
 							<li className="flex items-center gap-2 text-gray-400">
 								<MapPin size={16} />
-								123 Tech Street, CA 94000
+								Colombo, Sri Lanka
 							</li>
 						</ul>
 					</div>
@@ -106,7 +106,7 @@ export function Footer() {
 				{/* Divider */}
 				<div className="border-t border-gray-800 pt-8">
 					<div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-						<p>&copy; 2026 Apple Store. All rights reserved.</p>
+						<p>&copy; 2026 Smart Tech Store. All rights reserved.</p>
 						<div className="flex space-x-6 mt-4 md:mt-0">
 							<a href="#" className="hover:text-white transition">
 								Privacy Policy

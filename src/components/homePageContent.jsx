@@ -6,6 +6,48 @@ import { ProductCards } from "./productCards";
 import Loading from "./loading";
 import { ChevronRight } from "lucide-react";
 import HeroSection from "./heroSection";
+import { useInView } from "react-intersection-observer";
+
+// Reusable component to animate individual product cards
+function AnimatedProductCard({ product }) {
+	const { ref, inView } = useInView({
+		triggerOnce: true,
+		threshold: 0.1,
+		rootMargin: "50px 0px"
+	});
+
+	return (
+		<div
+			ref={ref}
+			className={`relative bg-white rounded-xl md:rounded-2xl p-3 md:p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-700 flex flex-col items-center group ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+				}`}
+		>
+			<Link to={`/overview/${product.productId}`} className="w-full flex flex-col items-center">
+				<div className="w-full h-32 md:h-48 mb-4 md:mb-6 mt-2 md:mt-4 flex items-center justify-center">
+					<img
+						src={product.imgUrls[0]}
+						alt={product.altNames[0]}
+						className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+					/>
+				</div>
+
+				<div className="text-center w-full">
+					<p className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.15em] mb-1.5">
+						Apple
+					</p>
+
+					<h3 className="font-medium text-sm md:text-lg text-gray-900 mb-1 md:mb-2 line-clamp-1">
+						{product.productName}
+					</h3>
+
+					<p className="text-gray-600 text-xs md:text-sm">
+						From <span className="text-gray-900 font-medium tracking-wide">Rs {product.sellingPrice}</span>
+					</p>
+				</div>
+			</Link>
+		</div>
+	);
+}
 
 export function HomePageContent() {
 	const [products, setProducts] = useState([]);
@@ -89,42 +131,14 @@ export function HomePageContent() {
 						<h2 className="text-4xl font-bold text-gray-900">Featured Products</h2>
 						<Link
 							to="/products"
-							className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
+							className="text-black font-semibold flex items-center gap-1"
 						>
 							View All <ChevronRight size={20} />
 						</Link>
 					</div>
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+					<div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 						{getFeaturedProducts().map((product) => (
-							<div
-								key={product.productId}
-								className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center group"
-							>
-
-								<Link to={`/overview/${product.productId}`} className="w-full flex flex-col items-center">
-									<div className="w-full h-48 md:h-52 mb-6 mt-4 flex items-center justify-center">
-										<img
-											src={product.imgUrls[0]}
-											alt={product.altNames[0]}
-											className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
-										/>
-									</div>
-
-									<div className="text-center w-full">
-										<p className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.15em] mb-1.5">
-											Apple
-										</p>
-
-										<h3 className="font-medium text-lg text-gray-900 mb-2 line-clamp-1">
-											{product.productName}
-										</h3>
-
-										<p className="text-gray-600 text-sm">
-											From <span className="text-gray-900 font-medium tracking-wide">Rs {product.sellingPrice}</span>
-										</p>
-									</div>
-								</Link>
-							</div>
+							<AnimatedProductCard key={product.productId} product={product} />
 						))}
 					</div>
 				</div>
@@ -146,43 +160,16 @@ export function HomePageContent() {
 								</div>
 								<Link
 									to="/products"
+									state={{ category: key }}
 									className="text-black hover: font-semibold flex items-center gap-1"
 								>
 									View All <ChevronRight size={20} />
 								</Link>
 							</div>
 
-							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+							<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
 								{categoryProducts.slice(0, 4).map((product) => (
-									<div
-										key={product.productId}
-										className="relative bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center group"
-									>
-
-										<Link to={`/overview/${product.productId}`} className="w-full flex flex-col items-center">
-											<div className="w-full h-48 md:h-52 mb-6 mt-4 flex items-center justify-center">
-												<img
-													src={product.imgUrls[0]}
-													alt={product.altNames[0]}
-													className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
-												/>
-											</div>
-
-											<div className="text-center w-full">
-												<p className="text-[11px] font-medium text-gray-500 uppercase tracking-[0.15em] mb-1.5">
-													Apple
-												</p>
-
-												<h3 className="font-medium text-lg text-gray-900 mb-2 line-clamp-1">
-													{product.productName}
-												</h3>
-
-												<p className="text-gray-600 text-sm">
-													From <span className="text-gray-900 font-medium tracking-wide">Rs {product.sellingPrice}</span>
-												</p>
-											</div>
-										</Link>
-									</div>
+									<AnimatedProductCard key={product.productId} product={product} />
 								))}
 							</div>
 						</div>

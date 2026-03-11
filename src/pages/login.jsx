@@ -28,7 +28,6 @@ export default function LoginPage() {
                     }
                 );
 
-                console.log(res.data);
                 login(res.data.token); // syncs context state immediately
 
                 if (res.data.role == "admin") {
@@ -43,7 +42,7 @@ export default function LoginPage() {
         },
 
         onError: () => {
-            console.log("Google Login Failed");
+            console.error("Google Login Failed");
         }
     });
 
@@ -63,7 +62,6 @@ export default function LoginPage() {
             })
 
             toast.success("login sucessful")
-            console.log(response.data)
             login(response.data.token); // syncs context state immediately
 
             if (response.data.role == "admin") {

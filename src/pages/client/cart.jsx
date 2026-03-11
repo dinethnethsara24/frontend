@@ -3,8 +3,8 @@ import { addToCart, getCart, getTotal, removeFromCart } from "../../utils/cart"
 import { BiMinus, BiPlus, BiTrash, BiShoppingBag } from "react-icons/bi"
 import { Link } from "react-router-dom"
 
-export default function CartPage(){
-    const [cart,setCart] = useState(getCart())
+export default function CartPage() {
+    const [cart, setCart] = useState(getCart())
 
     if (cart.length === 0) {
         return (
@@ -14,11 +14,11 @@ export default function CartPage(){
                 </div>
                 <h2 className="text-3xl font-bold text-secondary">Your cart is empty</h2>
                 <p className="text-gray-500 text-center max-w-md">
-                    Looks like you haven't added anything to your cart yet. 
+                    Looks like you haven't added anything to your cart yet.
                     Explore our products and find something you'll love!
                 </p>
-                <Link 
-                    to="/products" 
+                <Link
+                    to="/products"
                     className="bg-accent text-white px-8 py-3 rounded-xl font-bold 
                              hover:bg-secondary transform hover:scale-105 
                              transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -29,13 +29,13 @@ export default function CartPage(){
         )
     }
 
-    return(
+    return (
         <div className="w-full max-w-full min-h-screen bg-gradient-to-b from-white to-primary/10 
                       flex flex-col items-center pt-8 pb-8 relative">
-            
+
             {/* Desktop Checkout Card - Moved to better position */}
-            <div className="z-50 hidden lg:flex w-[320px] bg-white/90 backdrop-blur-sm 
-                          h-[100px] shadow-xl rounded-xl absolute top-4 right-8 
+            <div className="z-30 hidden lg:flex w-[320px] bg-white/90 backdrop-blur-sm 
+                          h-[100px] shadow-xl rounded-xl sticky top-24 self-end mr-8 
                           flex-row items-center justify-between px-6 border border-accent/20">
                 <div>
                     <p className="text-xs text-gray-500">Total</p>
@@ -43,8 +43,8 @@ export default function CartPage(){
                         LKR {getTotal().toFixed(2)}
                     </p>
                 </div>
-                <Link to="/checkout" state={{ cart: cart }} 
-                      className="bg-gradient-to-r from-accent to-secondary text-white 
+                <Link to="/checkout" state={{ cart: cart }}
+                    className="bg-gradient-to-r from-accent to-secondary text-white 
                                px-5 py-2.5 rounded-lg font-bold text-sm
                                hover:from-secondary hover:to-accent 
                                transform hover:scale-105 transition-all duration-300 
@@ -62,24 +62,24 @@ export default function CartPage(){
             {/* Cart Items Container */}
             <div className="w-full max-w-4xl px-4 md:px-8 space-y-4 mb-8">
                 {cart.map((item, index) => {
-                    return(
-                        <div key={item.productId} 
-                             className="group w-full bg-white rounded-2xl shadow-lg 
+                    return (
+                        <div key={item.productId}
+                            className="group w-full bg-white rounded-2xl shadow-lg 
                                       hover:shadow-xl transition-all duration-300 
                                       flex flex-col md:flex-row relative 
                                       justify-between items-start md:items-center p-4 
                                       border border-gray-100 hover:border-accent/30">
-                            
+
                             {/* Product Image & Details Row */}
                             <div className="flex flex-col sm:flex-row w-full md:w-auto items-start gap-4">
                                 {/* Product Image */}
                                 <div className="flex-shrink-0">
-                                    <img src={item.imgUrls} 
-                                         className="w-[100px] h-[100px] object-cover rounded-xl 
+                                    <img src={item.imgUrls}
+                                        className="w-[100px] h-[100px] object-cover rounded-xl 
                                                   shadow-md group-hover:shadow-lg 
                                                   transition-all duration-300"/>
                                 </div>
-                                
+
                                 {/* Product Details */}
                                 <div className="flex-1">
                                     <h1 className="text-lg md:text-xl text-secondary font-bold 
@@ -107,7 +107,7 @@ export default function CartPage(){
                                     </div>
                                 </div>
                             </div>
-                            
+
                             {/* Quantity Controls and Price Row */}
                             <div className="flex flex-row items-center justify-between w-full md:w-auto mt-4 md:mt-0 md:ml-4 gap-4">
                                 {/* Quantity Controls */}
@@ -117,11 +117,11 @@ export default function CartPage(){
                                                      hover:text-white transition-all duration-300 
                                                      flex items-center justify-center text-lg 
                                                      font-bold"
-                                            onClick={() => {
-                                                addToCart(item, -1)
-                                                setCart(getCart())
-                                            }}>
-                                        <BiMinus/>
+                                        onClick={() => {
+                                            addToCart(item, -1)
+                                            setCart(getCart())
+                                        }}>
+                                        <BiMinus />
                                     </button>
                                     <span className="w-8 text-center text-lg font-bold 
                                                    text-secondary">
@@ -132,14 +132,14 @@ export default function CartPage(){
                                                      hover:text-white transition-all duration-300 
                                                      flex items-center justify-center text-lg 
                                                      font-bold"
-                                            onClick={() => {
-                                                addToCart(item, 1)
-                                                setCart(getCart())
-                                            }}>
-                                        <BiPlus/>
+                                        onClick={() => {
+                                            addToCart(item, 1)
+                                            setCart(getCart())
+                                        }}>
+                                        <BiPlus />
                                     </button>
                                 </div>
-                                
+
                                 {/* Item Total */}
                                 <div className="text-right min-w-[100px]">
                                     <p className="text-xs text-gray-400">Subtotal</p>
@@ -148,7 +148,7 @@ export default function CartPage(){
                                     </h1>
                                 </div>
                             </div>
-                            
+
                             {/* Remove Button - Repositioned with better spacing */}
                             <button className="absolute -top-2 -right-2 md:static 
                                              w-8 h-8 rounded-full bg-red-50 
@@ -156,12 +156,12 @@ export default function CartPage(){
                                              hover:text-white transition-all duration-300 
                                              flex items-center justify-center 
                                              shadow-md hover:shadow-lg md:ml-2"
-                                    onClick={() => {
-                                        removeFromCart(item.productId)
-                                        setCart(getCart())
-                                    }}
-                                    title="Remove item">
-                                <BiTrash className="text-sm"/>
+                                onClick={() => {
+                                    removeFromCart(item.productId)
+                                    setCart(getCart())
+                                }}
+                                title="Remove item">
+                                <BiTrash className="text-sm" />
                             </button>
                         </div>
                     )
@@ -180,14 +180,14 @@ export default function CartPage(){
                         </p>
                     </div>
                     <div className="flex gap-4">
-                        <Link to="/products" 
-                              className="px-6 py-3 border-2 border-accent text-accent 
+                        <Link to="/products"
+                            className="px-6 py-3 border-2 border-accent text-accent 
                                        rounded-xl font-bold hover:bg-accent/5 
                                        transition-colors duration-300">
                             Continue Shopping
                         </Link>
-                        <Link to="/checkout" state={{ cart: cart }} 
-                              className="bg-gradient-to-r from-accent to-secondary 
+                        <Link to="/checkout" state={{ cart: cart }}
+                            className="bg-gradient-to-r from-accent to-secondary 
                                        text-white px-8 py-3 rounded-xl font-bold 
                                        hover:from-secondary hover:to-accent 
                                        transform hover:scale-105 transition-all duration-300 
@@ -209,8 +209,8 @@ export default function CartPage(){
                                 LKR {getTotal().toFixed(2)}
                             </p>
                         </div>
-                        <Link to="/checkout" state={{ cart: cart }} 
-                              className="bg-gradient-to-r from-accent to-secondary 
+                        <Link to="/checkout" state={{ cart: cart }}
+                            className="bg-gradient-to-r from-accent to-secondary 
                                        text-white px-6 py-3 rounded-xl font-bold 
                                        hover:from-secondary hover:to-accent 
                                        transition-all duration-300 

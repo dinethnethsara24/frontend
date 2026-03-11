@@ -59,9 +59,13 @@ export default function AdminPage() {
             Admin Dashboard
           </h2>
 
-          <div className="text-sm text-gray-500">
+          <div className="absolute left-1/2 transform -translate-x-1/2 text-sm text-gray-500">
             Welcome back, {userName}
           </div>
+
+          <Link to="/" className="ml-auto mr-4 px-4 py-2 bg-white text-black font-semibold rounded border border-[1px] hover:bg-black hover:text-white transition">
+            Shop
+          </Link>
 
           <Logout />
 

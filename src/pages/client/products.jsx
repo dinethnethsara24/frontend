@@ -4,9 +4,12 @@ import { Footer } from "../../components/footer";
 import { ProductCards } from "../../components/productCards";
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 export function ClientProductsPage() {
+    const location = useLocation();
     const [appliedSort, setAppliedSort] = useState("newest");
+    const [selectedCategory, setSelectedCategory] = useState(location.state?.category || "All");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -15,6 +18,16 @@ export function ClientProductsPage() {
         priceLow: "Price, Low to High",
         priceHigh: "Price, High to Low",
     };
+
+    const categories = [
+        { id: "All", name: "All Products" },
+        { id: "M", name: "iPhone" },
+        { id: "P", name: "Mac" },
+        { id: "W", name: "Apple Watch" },
+        { id: "H", name: "AirPods" },
+    ];
+
+
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -39,9 +52,25 @@ export function ClientProductsPage() {
             <main className="w-full max-w-7xl mx-auto px-6 py-8 flex-1">
 
                 {/* Top bar */}
-                <div className="flex items-center justify-end mb-6">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <span className="font-medium">Sort by:</span>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                    {/* Categories */}
+                    <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0 hide-scrollbar">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat.id}
+                                onClick={() => setSelectedCategory(cat.id)}
+                                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === cat.id
+                                    ? "bg-black text-white"
+                                    : "bg-white border border-gray-300 text-gray-700 hover:border-gray-500"
+                                    }`}
+                            >
+                                {cat.name}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-600 w-full sm:w-auto justify-end">
+                        <span className="font-medium shrink-0">Sort by:</span>
 
                         {/* Dropdown wrapper */}
                         <div className="relative" ref={dropdownRef}>
@@ -78,7 +107,7 @@ export function ClientProductsPage() {
                     </div>
                 </div>
 
-                <ProductCards sortOption={appliedSort} />
+                <ProductCards sortOption={appliedSort} category={selectedCategory} />
             </main>
 
             <Footer />
